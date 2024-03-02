@@ -1,0 +1,6 @@
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    #如果生成的json字符串为空，不生成json
+    default-property-inclusion: nan_empty

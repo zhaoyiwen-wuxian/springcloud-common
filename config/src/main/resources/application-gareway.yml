@@ -1,0 +1,18 @@
+spring:
+  cloud:
+    gateway:
+      #跨域
+      globalcors:
+        cors-configurations:
+          '[/**]': #允许跨域的访问资源
+            allowedOrigins:
+              - "https://docs.spring.io" #跨域允许来源
+            allowedMethods:
+              - GET
+              - PUT
+              - POST
+              - DELETE
+      routes:
+        discovery:
+          locator:
+            enabled: true #让Gateway可以发现nacos中的微服务

@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    nacos:
+      server-addr: '@config-addre@'
+    discovery:
+    heart-beat-interval: 1000  #刷新心跳的时间
+    heart-beat-timeout: 3000 #客户端子啊一段时间没有收到信息就会将其下线的时间间隔
+    ip-delete-timeout: 3000

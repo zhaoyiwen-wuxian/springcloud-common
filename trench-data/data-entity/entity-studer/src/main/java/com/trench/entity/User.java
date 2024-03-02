@@ -1,4 +1,4 @@
-package com.hzit.common.entity;
+package com.trench.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;

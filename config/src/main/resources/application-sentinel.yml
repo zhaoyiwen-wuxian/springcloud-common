@@ -1,0 +1,8 @@
+spring:
+  cloud:
+    sentinel:
+      transport:
+        # sentinel dashboard的地址
+        dashboard: '@sentinel-addre@'
+        # sentinel dashboard内部通信端口，默认为8719，如果被占用会自动+1，直到找到为止
+        port: 8719

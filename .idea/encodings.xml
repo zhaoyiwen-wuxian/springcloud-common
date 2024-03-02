@@ -1,7 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/ability/exce/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ability/exce/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ability/gateway/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ability/gateway/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ability/gatewayconfig/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ability/gatewayconfig/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ability/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/ability/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/business/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/business/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/business/studer/core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/business/studer/core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/business/studer/fegin/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/business/studer/fegin/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/business/studer/protocol/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/business/studer/protocol/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/business/studer/server/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/business/studer/server/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/business/studer/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/business/studer/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/annotation/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/annotation/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/aop/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/aop/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/common-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/common-core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/common-util/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/common-util/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/common-web/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/common-web/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/holder/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/holder/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/mdc/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/mdc/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/mysql/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/mysql/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/properties/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/properties/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/redis/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/redis/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/util/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/common/util/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/config/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/config/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/trench-data/basic/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/trench-data/basic/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/trench-data/data-dto/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/trench-data/data-dto/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/trench-data/data-entity/entity-studer/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/trench-data/data-entity/entity-studer/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/trench-data/data-entity/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/trench-data/data-entity/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/trench-data/data-mapper/mapper-studer/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/trench-data/data-mapper/mapper-studer/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/trench-data/data-mapper/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/trench-data/data-mapper/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/trench-data/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/trench-data/src/main/resources" charset="UTF-8" />
   </component>
 </project>

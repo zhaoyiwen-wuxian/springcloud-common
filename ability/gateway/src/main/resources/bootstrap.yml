@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    nacos:
+      config:
+        file-extension: yaml
+        server-addr: '@config-addre@'
+        #添加其他的配置文件的读取
+        shared-configs:
+          - dataId: redis.yaml
+            refresh: true   #是否支持动态刷新
+  profiles: '@runtime-profile@'
+
+    #在nacos中创建一个api-gateway-dev.yaml 后将application.yml文件中数据全部copy到nacos中，并且删除application.yml文件
+
+  #appConfig:
+  #name: gateway    动态更新
+
+  #共享的环境配置：api-gateway.yaml   将公共的丢到这个里面。

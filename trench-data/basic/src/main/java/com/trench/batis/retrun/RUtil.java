@@ -1,7 +1,7 @@
-package com.trench.cofig.util;
+package com.trench.batis.retrun;
 
-import com.trench.cofig.enums.CodeEnum;
-import com.trench.util.r.R;
+import com.trench.batis.enums.CodeEnum;
+import com.trench.batis.r.R;
 
 //生成快捷生成的r的方法
 public class RUtil {

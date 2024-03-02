@@ -1,4 +1,4 @@
-package com.hzit.common.util;
+package com.trench.util.common;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

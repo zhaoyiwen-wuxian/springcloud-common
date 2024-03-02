@@ -1,4 +1,4 @@
-package com.trench.cofig.initializer;
+package com.trench.initializer;
 
 import org.slf4j.MDC;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;

@@ -1,103 +1,422 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN" monitorInterval="30">
 
-    <!-- Logging Properties -->
-    <Properties>
-        <Property name="LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %p %m%n</Property>
-        <Property name="APP_LOG_ROOT">/temp/logs</Property>
-    </Properties>
+<!--Configuration 后面的 status，这个用于设置 log4j2 自身内部的信息输出级别，可以不设置，当设置成 trace 时，你会看到 log4j2 内部各种详细输出-->
+<!--monitorInterval：Log4j2 能够自动检测修改配置 文件和重新配置本身，设置间隔秒数-->
+<configuration status="error" monitorInterval="30">
+    <!--日志级别以及优先级排序: OFF > FATAL > ERROR > WARN > INFO > DEBUG > TRACE > ALL -->
+
+    <!--变量配置-->
+    <properties>
+        <!-- 格式化输出：%date 表示日期，%thread 表示线程名，%-5level：级别从左显示 5 个字符宽度 %msg：日志消息，%n 是换行符-->
+        <!-- %logger{36} 表示 Logger 名字最长 36 个字符 -->
+        <!--如果在PATTERN中配置了%C、%M、%L、%l、%F需要在appender中将includeLocation设置为true，会影响日志性能，项目上线后根据实际情况调整-->
+        <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] [%X{traceId}] %-5level [%logger{50}:%L] - %msg%n"/>
+        <property name="LOG_CONSOLE_PATTERN" value="%style{%d{ISO8601}}{bright,green} %highlight{%-5level} [%style{%t}{bright,blue}] %style{%C{}}{bright,yellow}: %msg%n%style{%throwable}{red}"/>
+        <property name="ACCESS_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} - %msg%n"/>
+
+        <!-- 定义日志存储的路径 -->
+        <property name="FILE_PATH" value="${ctx:logPath}"/>
+        <property name="FILE_NAME" value="${ctx:newFrame}"/>
+    </properties>
 
     <Appenders>
-
-        <!-- Console Appender -->
-        <Console name="Console" target="SYSTEM_OUT" follow="true">
-            <PatternLayout pattern="${LOG_PATTERN}"/>
+        <!--*********************控制台日志***********************-->
+        <Console name="consoleAppender" target="SYSTEM_OUT">
+            <!--设置日志格式及颜色-->
+            <PatternLayout pattern="${LOG_PATTERN}" charset="UTF-8"/>
         </Console>
 
-        <!-- File Appenders on need basis -->
-        <RollingFile name="frameworkLog" fileName="${APP_LOG_ROOT}/app-framework.log"
-                     filePattern="${APP_LOG_ROOT}/app-framework-%d{yyyy-MM-dd}-%i.log">
-            <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="${LOG_PATTERN}"/>
+        <!--info级别日志-->
+        <!-- 这个会打印出所有的info及以上级别的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
+        <RollingFile name="infoFileAppender"
+                     fileName="${FILE_PATH}/${FILE_NAME}/log_info.log"
+                     filePattern="${FILE_PATH}/${FILE_NAME}/info/log-info-%d{yyyy-MM-dd}_%i.log.gz"
+                     append="true">
+            <!--设置日志格式-->
+            <PatternLayout pattern="${LOG_PATTERN}" charset="UTF-8"/>
+            <Filters>
+                <!--过滤掉warn及更高级别日志-->
+                <ThresholdFilter level="warn" onMatch="DENY" onMismatch="NEUTRAL" />
+                <ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10MB" />
+                <!-- 基于时间的触发策略。该策略主要是完成周期性的log文件封存工作。有两个参数：
+               interval，integer型，指定两次封存动作之间的时间间隔。单位:以日志的命名精度来确定单位，
+                   比如yyyy-MM-dd-HH 单位为小时，yyyy-MM-dd-HH-mm 单位为分钟
+               modulate，boolean型，说明是否对封存时间进行调制。若modulate=true，
+                   则封存时间将以0点为边界进行偏移计算。比如，modulate=true，interval=4hours，
+                   那么假设上次封存日志的时间为00:00，则下次封存日志的时间为04:00，
+                   之后的封存时间依次为08:00，12:00，16:00-->
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
             </Policies>
-            <DefaultRolloverStrategy max="10"/>
+
+            <!-- DefaultRolloverStrategy 属性如不设置，则默认为最多同一文件夹下当天 7 个文件后开始覆盖-->
+            <DefaultRolloverStrategy max="30">
+                <!-- 删除处理策略，在配置的路径中搜索，maxDepth 表示往下搜索的最大深度 -->
+                <Delete basePath="${FILE_PATH}/${FILE_NAME}/" maxDepth="2">
+                    <!-- 文件名搜索匹配，支持正则 -->
+                    <IfFileName glob="*.log.gz"/>
+                    <!--!Note: 这里的 age 必须和 filePattern 协调, 后者是精确到 dd, 这里就要写成 xd, xD 就不起作用
+                    另外, 数字最好 >2, 否则可能造成删除的时候, 最近的文件还处于被占用状态,导致删除不成功!-->
+                    <!--7天-->
+                    <IfLastModified age="7d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+
         </RollingFile>
 
-        <RollingFile name="debugLog" fileName="${APP_LOG_ROOT}/app-debug.log"
-                     filePattern="${APP_LOG_ROOT}/app-debug-%d{yyyy-MM-dd}-%i.log">
-            <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="${LOG_PATTERN}"/>
+        <!--warn级别日志-->
+        <!-- 这个会打印出所有的warn及以上级别的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
+        <RollingFile name="warnFileAppender"
+                     fileName="${FILE_PATH}/${FILE_NAME}/log_warn.log"
+                     filePattern="${FILE_PATH}/${FILE_NAME}/warn/log-warn-%d{yyyy-MM-dd}_%i.log.gz"
+                     append="true">
+            <!--设置日志格式-->
+            <PatternLayout pattern="${LOG_PATTERN}" charset="UTF-8"/>
+            <Filters>
+                <!--过滤掉error及更高级别日志-->
+                <ThresholdFilter level="error" onMatch="DENY" onMismatch="NEUTRAL" />
+                <ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10MB" />
+                <!-- 基于时间的触发策略。该策略主要是完成周期性的log文件封存工作。有两个参数：
+               interval，integer型，指定两次封存动作之间的时间间隔。单位:以日志的命名精度来确定单位，
+                   比如yyyy-MM-dd-HH 单位为小时，yyyy-MM-dd-HH-mm 单位为分钟
+               modulate，boolean型，说明是否对封存时间进行调制。若modulate=true，
+                   则封存时间将以0点为边界进行偏移计算。比如，modulate=true，interval=4hours，
+                   那么假设上次封存日志的时间为00:00，则下次封存日志的时间为04:00，
+                   之后的封存时间依次为08:00，12:00，16:00-->
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
             </Policies>
-            <DefaultRolloverStrategy max="10"/>
+
+            <!-- DefaultRolloverStrategy 属性如不设置，则默认为最多同一文件夹下当天 7 个文件后开始覆盖-->
+            <DefaultRolloverStrategy max="30">
+                <!-- 删除处理策略，在配置的路径中搜索，maxDepth 表示往下搜索的最大深度 -->
+                <Delete basePath="${FILE_PATH}/${FILE_NAME}/" maxDepth="2">
+                    <!-- 文件名搜索匹配，支持正则 -->
+                    <IfFileName glob="*.log.gz"/>
+                    <!--!Note: 这里的 age 必须和 filePattern 协调, 后者是精确到 dd, 这里就要写成 xd, xD 就不起作用
+                    另外, 数字最好 >2, 否则可能造成删除的时候, 最近的文件还处于被占用状态,导致删除不成功!-->
+                    <!--7天-->
+                    <IfLastModified age="7d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+
+
         </RollingFile>
 
-        <RollingFile name="infoLog" fileName="${APP_LOG_ROOT}/app-info.log"
-                     filePattern="${APP_LOG_ROOT}/app-info-%d{yyyy-MM-dd}-%i.log" >
-            <LevelRangeFilter minLevel="INFO" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="${LOG_PATTERN}"/>
+        <!--error级别日志-->
+        <!-- 这个会打印出所有的error及以上级别的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档-->
+        <RollingFile name="errorFileAppender"
+                     fileName="${FILE_PATH}/${FILE_NAME}/log_error.log"
+                     filePattern="${FILE_PATH}/${FILE_NAME}/error/log-error-%d{yyyy-MM-dd}_%i.log.gz"
+                     append="true">
+            <!--设置日志格式-->
+            <PatternLayout pattern="${LOG_PATTERN}" charset="UTF-8"/>
+            <Filters>
+                <ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10MB" />
+                <!-- 基于时间的触发策略。该策略主要是完成周期性的log文件封存工作。有两个参数：
+               interval，integer型，指定两次封存动作之间的时间间隔。单位:以日志的命名精度来确定单位，
+                   比如yyyy-MM-dd-HH 单位为小时，yyyy-MM-dd-HH-mm 单位为分钟
+               modulate，boolean型，说明是否对封存时间进行调制。若modulate=true，
+                   则封存时间将以0点为边界进行偏移计算。比如，modulate=true，interval=4hours，
+                   那么假设上次封存日志的时间为00:00，则下次封存日志的时间为04:00，
+                   之后的封存时间依次为08:00，12:00，16:00-->
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
             </Policies>
-            <DefaultRolloverStrategy max="10"/>
+
+            <!-- DefaultRolloverStrategy 属性如不设置，则默认为最多同一文件夹下当天 7 个文件后开始覆盖-->
+            <DefaultRolloverStrategy max="30">
+                <!-- 删除处理策略，在配置的路径中搜索，maxDepth 表示往下搜索的最大深度 -->
+                <Delete basePath="${FILE_PATH}/${FILE_NAME}/" maxDepth="2">
+                    <!-- 文件名搜索匹配，支持正则 -->
+                    <IfFileName glob="*.log.gz"/>
+                    <!--!Note: 这里的 age 必须和 filePattern 协调, 后者是精确到 dd, 这里就要写成 xd, xD 就不起作用
+                    另外, 数字最好 >2, 否则可能造成删除的时候, 最近的文件还处于被占用状态,导致删除不成功!-->
+                    <!--7天-->
+                    <IfLastModified age="7d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+
         </RollingFile>
 
-        <RollingFile name="errorLog" fileName="${APP_LOG_ROOT}/app-error.log"
-                     filePattern="${APP_LOG_ROOT}/app-error-%d{yyyy-MM-dd}-%i.log" >
-            <LevelRangeFilter minLevel="ERROR" maxLevel="ERROR" onMatch="ACCEPT" onMismatch="DENY"/>
-            <PatternLayout pattern="${LOG_PATTERN}"/>
+        <!--访问日志-->
+        <RollingFile name="accessAppender"
+                     fileName="${FILE_PATH}/${FILE_NAME}/log_access.log"
+                     filePattern="${FILE_PATH}/${FILE_NAME}/access/log-access-%d{yyyy-MM-dd}_%i.log.gz"
+                     append="true">
+            <!--设置日志格式-->
+            <PatternLayout pattern="${ACCESS_LOG_PATTERN}" charset="UTF-8"/>
+            <Filters>
+                <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
+            </Filters>
             <Policies>
-                <SizeBasedTriggeringPolicy size="10MB" />
+                <!-- 基于时间的触发策略。该策略主要是完成周期性的log文件封存工作。有两个参数：
+               interval，integer型，指定两次封存动作之间的时间间隔。单位:以日志的命名精度来确定单位，
+                   比如yyyy-MM-dd-HH 单位为小时，yyyy-MM-dd-HH-mm 单位为分钟
+               modulate，boolean型，说明是否对封存时间进行调制。若modulate=true，
+                   则封存时间将以0点为边界进行偏移计算。比如，modulate=true，interval=4hours，
+                   那么假设上次封存日志的时间为00:00，则下次封存日志的时间为04:00，
+                   之后的封存时间依次为08:00，12:00，16:00-->
+                <TimeBasedTriggeringPolicy interval="1"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
             </Policies>
-            <DefaultRolloverStrategy max="10"/>
+
+            <!-- DefaultRolloverStrategy 属性如不设置，则默认为最多同一文件夹下当天 7 个文件后开始覆盖-->
+            <DefaultRolloverStrategy max="30">
+                <!-- 删除处理策略，在配置的路径中搜索，maxDepth 表示往下搜索的最大深度 -->
+                <Delete basePath="${FILE_PATH}/${FILE_NAME}/" maxDepth="2">
+                    <!-- 文件名搜索匹配，支持正则 -->
+                    <IfFileName glob="*.log.gz"/>
+                    <!--!Note: 这里的 age 必须和 filePattern 协调, 后者是精确到 dd, 这里就要写成 xd, xD 就不起作用
+                    另外, 数字最好 >2, 否则可能造成删除的时候, 最近的文件还处于被占用状态,导致删除不成功!-->
+                    <!--7天-->
+                    <IfLastModified age="7d"/>
+                </Delete>
+            </DefaultRolloverStrategy>
+
         </RollingFile>
 
-        <RollingFile name="perfLog" fileName="${APP_LOG_ROOT}/app-perf.log"
-                     filePattern="${APP_LOG_ROOT}/app-perf-%d{yyyy-MM-dd}-%i.log" >
-            <PatternLayout pattern="${LOG_PATTERN}"/>
-            <Policies>
-                <SizeBasedTriggeringPolicy size="10MB" />
-            </Policies>
-            <DefaultRolloverStrategy max="1"/>
-        </RollingFile>
 
-        <RollingFile name="traceLog" fileName="${APP_LOG_ROOT}/app-trace.log"
-                     filePattern="${APP_LOG_ROOT}/app-trace-%d{yyyy-MM-dd}-%i.log" >
-            <PatternLayout pattern="${LOG_PATTERN}"/>
-            <Policies>
-                <SizeBasedTriggeringPolicy size="10MB" />
-            </Policies>
-            <DefaultRolloverStrategy max="1"/>
-        </RollingFile>
-
+        <!--<Async name="Async" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </Async>-->
     </Appenders>
 
+
     <Loggers>
+        <AsyncLogger name="org.apache.http" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="io.lettuce" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="io.netty" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.quartz" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.springframework" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.springdoc" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="druid.sql" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="io.undertow" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="sun.rmi" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="com.sun.mail" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="javax.management" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="de.codecentric" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.hibernate.validator" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.mybatis.spring.mapper" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.xnio" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="springfox" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="com.baomidou" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="io.micrometer.core" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="Validator" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.neo4j" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.apache.zookeeper" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="org.apache.curator" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="oshi.util" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="net.javacrumbs" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+        <AsyncLogger name="com.atomikos" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
 
-        <Logger name="com.howtodoinjava.app.pref" additivity="false" level="trace">
-            <AppenderRef ref="traceLog" />
-            <AppenderRef ref="Console" />
-        </Logger>
+        <AsyncLogger name="org.springframework.boot.actuate.mail.MailHealthIndicator" level="error" includeLocation="true" additivity="false">
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
 
-        <Logger name="com.howtodoinjava.app" additivity="false" level="debug">
-            <AppenderRef ref="debugLog" />
-            <AppenderRef ref="infoLog"  />
-            <AppenderRef ref="errorLog" />
-            <AppenderRef ref="Console"  />
-        </Logger>
+        <AsyncLogger name="org.flowable" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
 
-        <Logger name="org.framework.package" additivity="false" level="info">
-            <AppenderRef ref="perfLog" />
-            <AppenderRef ref="Console"/>
-        </Logger>
+        <AsyncLogger name="org.apache.ibatis.transaction" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
 
-        <Root level="warn">
-            <AppenderRef ref="Console"/>
-        </Root>
+        <AsyncLogger name="com.iscas.base.biz.schedule" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
 
+        <AsyncLogger name="com.sun.jna.Native" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="io.swagger" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="com.sun.jna.NativeLibrary" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="com.alibaba.druid.pool.PreparedStatementPool" level="info" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="com.iscas.biz.config.log.AccessLogInterceptor" level="debug" includeLocation="true" additivity="false">
+            <AppenderRef ref="accessAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="org.apache.http.impl.execchain.RetryExec" level="error" includeLocation="true" additivity="false">
+            <AppenderRef ref="errorFileAppender"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="accessLogger" level="debug" includeLocation="true" additivity="false">
+            <AppenderRef ref="accessAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncLogger>
+
+        <AsyncRoot level="debug" includeLocation="true" additivity="false">
+            <AppenderRef ref="infoFileAppender"/>
+            <AppenderRef ref="warnFileAppender"/>
+            <AppenderRef ref="errorFileAppender"/>
+            <AppenderRef ref="consoleAppender"/>
+        </AsyncRoot>
     </Loggers>
-
-</Configuration>
+</configuration>

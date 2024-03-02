@@ -1,4 +1,4 @@
-package com.trench.util.snow;
+package com.trench.batis.snow;
 
 public class SnowFlake {
     /**

@@ -1,0 +1,23 @@
+feign:
+  okhttp:
+    enabled: true
+  httpclient:
+    enabled: false
+  hystrix:
+    enabled: false
+    #设置传递的参数名称
+  paramNames:
+    - api-version
+    - token
+
+  client:
+    config:
+      default:
+        connectTimeout: 1000   #链接超时
+        readTimeout: 6000  #读超时
+      trench-studer:
+        connectTimeout: 1000   #链接超时
+        readTimeout: 3000
+      business-class:
+        connectTimeout: 1000   #链接超时
+        readTimeout: 4000

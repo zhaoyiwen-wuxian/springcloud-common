@@ -10,11 +10,18 @@
     </parent>
 
     <artifactId>data-mapper</artifactId>
-
+    <packaging>pom</packaging>
+    <modules>
+        <module>mapper-studer</module>
+    </modules>
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <mysql.version>1.0-SNAPSHOT</mysql.version>
     </properties>
-
+    <dependencies>
+        <dependency>
+            <groupId>com.trench</groupId>
+            <artifactId>mysql</artifactId>
+            <version>${mysql.version}</version>
+        </dependency>
+    </dependencies>
 </project>

@@ -1,4 +1,5 @@
-package com.trench.util.adapter;
+/*
+package com.trench.cofig.adapter;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
 import org.apache.logging.log4j.Logger;
@@ -136,3 +137,4 @@ public class TtlMDCAdapter implements MDCAdapter {
         }
     }
 }
+*/

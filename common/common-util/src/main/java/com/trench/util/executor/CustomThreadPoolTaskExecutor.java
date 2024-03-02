@@ -1,4 +1,4 @@
-package com.trench.cofig.executor;
+package com.trench.util.executor;
 
 import com.alibaba.ttl.TtlCallable;
 import com.alibaba.ttl.TtlRunnable;

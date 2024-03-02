@@ -1,8 +1,7 @@
 package com.trench.server;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.stereotype.Service;
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.trench.entity.Studer;
 
-@Service
-public interface StuderServer extends ServiceImpl<> {
+public interface StuderServer extends IService<Studer> {
 }

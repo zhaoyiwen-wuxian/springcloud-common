@@ -1,6 +1,6 @@
 package com.trench.cofig.valid;
 
-import com.trench.cofig.hander.CustemValidHander;
+import com.trench.cofig.hander.LinkageValidHander;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -14,8 +14,8 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD,ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 //校验注解必须标记的注解，方法validatedBy用户指定实际的校验过程的类
-@Constraint(validatedBy = CustemValidHander.class)
-public @interface CustemValid {
+@Constraint(validatedBy = LinkageValidHander.class)
+public @interface LinkageValid {
       String message() default "校验未通过";
 
 //      校验分组信息

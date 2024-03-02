@@ -1,4 +1,4 @@
-package com.trench.interfa;
+package com.trench.annotation;
 
 import java.lang.annotation.*;
 

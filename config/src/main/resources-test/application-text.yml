@@ -1,5 +1,3 @@
 spring:
-  datasource:
-    url:   #数据库配置
-    username:
-    password:
+  profiles:
+    - datasource

@@ -1,4 +1,4 @@
-package com.trench.batis;
+package com.trench.batis.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

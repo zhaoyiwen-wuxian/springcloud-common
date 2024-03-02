@@ -1,4 +1,4 @@
-package com.trench.util.loader;
+package com.trench.batis.loader;
 
 import java.io.IOException;
 import java.io.InputStream;

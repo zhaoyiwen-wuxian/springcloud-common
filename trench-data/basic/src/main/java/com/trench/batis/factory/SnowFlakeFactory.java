@@ -1,7 +1,7 @@
-package com.trench.util.factory;
+package com.trench.batis.factory;
 
-import com.trench.util.loader.SnowFlakeLoader;
-import com.trench.util.snow.SnowFlake;
+import com.trench.batis.loader.SnowFlakeLoader;
+import com.trench.batis.snow.SnowFlake;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

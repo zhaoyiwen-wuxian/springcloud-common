@@ -1,4 +1,4 @@
-package com.hzit.common.constants;
+package com.trench.util.common;
 
 
 public class TokenConstants {

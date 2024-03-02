@@ -1,4 +1,4 @@
-package com.trench.webintercepter;
+package com.trench.aop;
 
 import com.trench.batis.page.PageUtil;
 import com.trench.batis.page.ThreadObjectPage;

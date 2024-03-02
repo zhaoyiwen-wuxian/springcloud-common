@@ -3,4 +3,31 @@ spring:
     url:   #数据库配置
     username:
     password:
+  #自己配置其他的
+    driver-class-name:  com.mysql.cj.jdbc.Driver
+    type: com.alibaba.driver.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      max-active: 30
+      min-idle: 5
+      max-wait: 6000
+      time-between-eviction-runs-millis: 6000
+      min-evictable-idle-time-millis: 30000
+      validation-query: SELECT 1 FROM DUAL
+      test-on-return: false
+      test-on-borrow: false
+      pool-prepared-statements: true
+      max-pool-prepared-statement-per-connection-size: 50
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
+      use-global-data-source-stat: true
+mybatis-plus:
+  config-location: classpath:mapper/mybatis-config.xml
+com:
+  mybatis:
+    plugin:
+      page:
+        enable: true
+      sql:
+        enable: true   #自定义sql监控插件
+
 

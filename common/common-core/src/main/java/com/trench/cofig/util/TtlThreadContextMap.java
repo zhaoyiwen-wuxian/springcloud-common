@@ -1,3 +1,4 @@
+/*
 package com.trench.cofig.util;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
@@ -105,3 +106,4 @@ public class TtlThreadContextMap implements ThreadContextMap {
         return true;
     }
 }
+*/

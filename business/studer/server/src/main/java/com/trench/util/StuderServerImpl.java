@@ -1,4 +1,4 @@
-package com.trench.impl;
+package com.trench.util;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.trench.dao.StuderDao;

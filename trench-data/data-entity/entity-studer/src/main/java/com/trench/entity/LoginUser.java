@@ -1,4 +1,4 @@
-package com.hzit.common.entity;
+package com.trench.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

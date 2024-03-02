@@ -1,0 +1,18 @@
+server:
+  port: 8100
+spring:
+  application:
+    name: trench-studer
+  profiles: '@runtime-profile@'
+  cloud:
+    nacos:
+      server-addr: '@config-addre@'
+      config:
+        shared-configs:
+          - dataId: sql.yaml
+            refresh: true #刷新
+      discovery:
+        heart-beat-interval: 1000  #刷新心跳的时间
+        heart-beat-timeout: 3000 #客户端子啊一段时间没有收到信息就会将其下线的时间间隔
+        ip-delete-timeout: 3000
+

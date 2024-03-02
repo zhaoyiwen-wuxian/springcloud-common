@@ -1,4 +1,4 @@
-package com.trench.cofig.enums;
+package com.trench.batis.enums;
 
 public enum CustemEnum {
     MALE(1,"男"),

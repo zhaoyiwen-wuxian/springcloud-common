@@ -10,11 +10,20 @@
     </parent>
 
     <artifactId>trench-data</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>data-entity</module>
+        <module>data-mapper</module>
+        <module>basic</module>
+    </modules>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
 </project>

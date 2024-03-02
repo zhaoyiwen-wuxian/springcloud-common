@@ -1,5 +1,14 @@
 spring:
-  datasource:
-    url:   #数据库配置
-    username:
-    password:
+  profiles:
+    - datasource
+    - log
+    - jackson
+    - -nacos
+    - eureka
+    - feign
+    - gateway
+    - redis
+    - sentinel
+security:
+  ignore:
+    -    #白名单接口路径

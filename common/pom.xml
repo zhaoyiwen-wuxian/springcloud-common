@@ -10,11 +10,32 @@
     </parent>
 
     <artifactId>common</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>common-core</module>
+        <module>common-web</module>
+        <module>common-util</module>
+        <module>mysql</module>
+        <module>mdc</module>
+        <module>holder</module>
+        <module>aop</module>
+        <module>annotation</module>
+        <module>properties</module>
+        <module>redis</module>
+    </modules>
 
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+
+    </dependencies>
 </project>

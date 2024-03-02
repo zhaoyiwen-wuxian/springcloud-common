@@ -1,16 +1,15 @@
-package com.trench.util.r;
+package com.trench.batis.r;
+import com.trench.batis.page.PageBaseRetrun;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.io.Serializable;
-
 @Data
 @Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public class R<T> implements Serializable {
+public class R<T> extends PageBaseRetrun {
 
     private Integer code;
 

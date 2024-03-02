@@ -1,12 +1,13 @@
 package com.trench.application;
 
-import com.trench.aop.api.EnableApiVersion;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
-public class StuderApplication {
+@EnableDiscoveryClient
+public class GatewayApplication {
     public static void main(String[] args) {
-        SpringApplication.run(StuderApplication.class,args);
+        SpringApplication.run(GatewayApplication.class,args);
     }
 }

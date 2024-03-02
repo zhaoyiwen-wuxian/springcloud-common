@@ -10,11 +10,15 @@
     </parent>
 
     <artifactId>mapper-studer</artifactId>
-
     <properties>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.trench</groupId>
+            <artifactId>entity-studer</artifactId>
+        </dependency>
+    </dependencies>
+
 
 </project>
