@@ -1,0 +1,3 @@
+#com.trench.cofig.initializer.TtlMDCAdapterInitializer  #将日志文件进行Spring加载
+com.trench.cofig.initializer.MDCAdapterInitializer  #第二种方式
+
